@@ -206,25 +206,12 @@ class TypeWriter {
 // ---- Page Transition ----
 class PageTransition {
   constructor() {
-    this.overlay = document.createElement('div');
-    this.overlay.className = 'page-transition-overlay';
-    // Start visible so page fades IN
-    this.overlay.style.opacity = '1';
-    this.overlay.style.pointerEvents = 'all';
-    document.body.appendChild(this.overlay);
+    this.overlay = document.querySelector('.page-transition-overlay');
+    if (!this.overlay) return;
 
-    // Fade in (hide overlay) after a short delay
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        this.overlay.style.opacity = '0';
-        this.overlay.style.pointerEvents = 'none';
-      }, 100);
-    });
-
-    // Intercept link clicks
+    // Intercept internal link clicks for smooth exit
     document.querySelectorAll('a[href]').forEach(link => {
       const href = link.getAttribute('href');
-      // Only intercept internal links (not external, not anchors, not mailto)
       if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto') &&
           href.endsWith('.html') && !link.getAttribute('target')) {
         link.addEventListener('click', (e) => {
@@ -236,8 +223,7 @@ class PageTransition {
   }
 
   navigateTo(url) {
-    this.overlay.style.opacity = '1';
-    this.overlay.style.pointerEvents = 'all';
+    this.overlay.classList.add('navigating');
     setTimeout(() => {
       window.location.href = url;
     }, 400);
