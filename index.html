@@ -4,20 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Srijan Das - B.Tech CSE(AIML) Student | Python, Java & Web Developer. Explore my projects and journey.">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Srijan Das | Developer & Student">
+  <meta property="og:description" content="B.Tech CSE (AI & ML) student passionate about Python, Java, and Web Development. Check out my projects and journey.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="favicon.png">
   <title>Srijan Das | Developer & Student</title>
+  <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/animations.css">
+  <!-- Google Analytics (replace G-S77HZT5S6M with your ID) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S77HZT5S6M"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-S77HZT5S6M');</script>
 </head>
 <body>
   <!-- Preloader -->
   <div class="preloader"><div class="preloader-spinner"></div></div>
 
-  <!-- Background Shapes -->
-  <div class="bg-shapes">
-    <div class="bg-shape bg-shape--1"></div>
-    <div class="bg-shape bg-shape--2"></div>
-    <div class="bg-shape bg-shape--3"></div>
-  </div>
+  <!-- Particle Background -->
+  <canvas id="particleCanvas"></canvas>
 
   <!-- Navigation -->
   <nav class="navbar" id="navbar">
@@ -61,7 +66,7 @@
         </div>
         <h1>
           Hey, I'm <span class="animated-gradient-text">Srijan Das</span><span class="typing-cursor"></span>
-          <br>Student &amp; Developer
+          <br><span id="typing-role">Developer</span>
         </h1>
         <p>B.Tech CSE (AI &amp; ML) student passionate about building things with Python, Java, and Web Technologies. Currently on a journey to turn ideas into code.</p>
         <div class="hero-buttons">
@@ -266,5 +271,6 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script src="js/effects.js"></script>
 </body>
 </html>

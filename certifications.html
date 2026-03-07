@@ -4,9 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Certifications and achievements by Srijan Das.">
+  <meta property="og:title" content="Certifications | Srijan Das">
+  <meta property="og:description" content="Certifications and achievements by Srijan Das - courses and milestones.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="favicon.png">
   <title>Certifications | Srijan Das</title>
+  <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/animations.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S77HZT5S6M"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-S77HZT5S6M');</script>
   <style>
     .cert-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-2xl); }
     .cert-card {
@@ -71,7 +78,7 @@
 </head>
 <body>
   <div class="preloader"><div class="preloader-spinner"></div></div>
-  <div class="bg-shapes"><div class="bg-shape bg-shape--1"></div><div class="bg-shape bg-shape--2"></div><div class="bg-shape bg-shape--3"></div></div>
+  <canvas id="particleCanvas"></canvas>
 
   <nav class="navbar" id="navbar">
     <div class="container">
@@ -167,5 +174,6 @@
     </div>
   </footer>
   <script src="js/main.js"></script>
+  <script src="js/effects.js"></script>
 </body>
 </html>
