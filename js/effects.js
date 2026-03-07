@@ -208,7 +208,18 @@ class PageTransition {
   constructor() {
     this.overlay = document.createElement('div');
     this.overlay.className = 'page-transition-overlay';
+    // Start visible so page fades IN
+    this.overlay.style.opacity = '1';
+    this.overlay.style.pointerEvents = 'all';
     document.body.appendChild(this.overlay);
+
+    // Fade in (hide overlay) after a short delay
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        this.overlay.style.opacity = '0';
+        this.overlay.style.pointerEvents = 'none';
+      }, 100);
+    });
 
     // Intercept link clicks
     document.querySelectorAll('a[href]').forEach(link => {
@@ -225,7 +236,8 @@ class PageTransition {
   }
 
   navigateTo(url) {
-    this.overlay.classList.add('active');
+    this.overlay.style.opacity = '1';
+    this.overlay.style.pointerEvents = 'all';
     setTimeout(() => {
       window.location.href = url;
     }, 400);
