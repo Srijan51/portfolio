@@ -46,54 +46,8 @@
 
   <section id="all-projects">
     <div class="container">
-      <div class="projects-grid">
-        <!-- Attendance Calculator -->
-        <div class="project-card reveal delay-1 tilt-card">
-          <div class="project-card-image">
-            <div class="project-card-placeholder" style="background:linear-gradient(135deg,#6c63ff33,#00d4ff22);display:flex;align-items:center;justify-content:center;height:220px;font-size:4rem;">📊</div>
-            <div class="project-card-overlay">
-              <a href="https://srijan51.github.io/attendance-calculator/" target="_blank" class="btn btn-primary" style="padding:8px 20px;font-size:0.8rem;">Live Demo</a>
-              <a href="https://github.com/Srijan51/attendance-calculator" target="_blank" class="btn btn-outline" style="padding:8px 20px;font-size:0.8rem;">GitHub</a>
-            </div>
-          </div>
-          <div class="project-card-body">
-            <div class="project-card-tags"><span class="project-tag">HTML</span><span class="project-tag">CSS</span><span class="project-tag">JavaScript</span></div>
-            <h3>Attendance Calculator</h3>
-            <p>Calculate your attendance percentage instantly. Plan how many classes you need to attend or can skip while maintaining your target attendance.</p>
-          </div>
-        </div>
-
-        <!-- To-Do Task Planner -->
-        <div class="project-card reveal delay-2 tilt-card">
-          <div class="project-card-image">
-            <div class="project-card-placeholder" style="background:linear-gradient(135deg,#a855f733,#6c63ff22);display:flex;align-items:center;justify-content:center;height:220px;font-size:4rem;">✅</div>
-            <div class="project-card-overlay">
-              <a href="https://srijan51.github.io/to-do-list/" target="_blank" class="btn btn-primary" style="padding:8px 20px;font-size:0.8rem;">Live Demo</a>
-              <a href="https://github.com/Srijan51/to-do-list" target="_blank" class="btn btn-outline" style="padding:8px 20px;font-size:0.8rem;">GitHub</a>
-            </div>
-          </div>
-          <div class="project-card-body">
-            <div class="project-card-tags"><span class="project-tag">HTML</span><span class="project-tag">CSS</span><span class="project-tag">JavaScript</span></div>
-            <h3>To-Do Task Planner</h3>
-            <p>A clean and intuitive task management application. Add, complete, and delete tasks with a beautiful, responsive interface to stay organized.</p>
-          </div>
-        </div>
-
-        <!-- Expense Tracker -->
-        <div class="project-card reveal delay-3 tilt-card">
-          <div class="project-card-image">
-            <div class="project-card-placeholder" style="background:linear-gradient(135deg,#00d4ff33,#a855f722);display:flex;align-items:center;justify-content:center;height:220px;font-size:4rem;">💰</div>
-            <div class="project-card-overlay">
-              <a href="https://srijan51.github.io/expense-tracker/" target="_blank" class="btn btn-primary" style="padding:8px 20px;font-size:0.8rem;">Live Demo</a>
-              <a href="https://github.com/Srijan51/expense-tracker" target="_blank" class="btn btn-outline" style="padding:8px 20px;font-size:0.8rem;">GitHub</a>
-            </div>
-          </div>
-          <div class="project-card-body">
-            <div class="project-card-tags"><span class="project-tag">HTML</span><span class="project-tag">CSS</span><span class="project-tag">JavaScript</span></div>
-            <h3>Expense Tracker</h3>
-            <p>Track your income and expenses with a visual breakdown. Stay on top of your finances with this simple and effective budgeting tool.</p>
-          </div>
-        </div>
+      <div class="projects-grid" id="dynamic-projects-grid">
+        <!-- All projects will be loaded dynamically via api.js -->
       </div>
 
       <!-- More Coming Soon -->
@@ -127,7 +81,58 @@
       </div>
     </div>
   </footer>
+  <script src="js/api.js"></script>
   <script src="js/main.js"></script>
   <script src="js/effects.js"></script>
+  <script>
+    // Initialize dynamic content on projects page
+    document.addEventListener('DOMContentLoaded', async () => {
+      const projectsGrid = document.getElementById('dynamic-projects-grid');
+      if (projectsGrid && window.api) {
+        const projects = await window.api.fetchProjects();
+        if (projects.length > 0) {
+          projectsGrid.innerHTML = '';
+          projects.forEach((proj, index) => {
+            const delayClass = `delay-${(index % 3) + 1}`;
+            
+            // Build tags HTML
+            let tagsHtml = '';
+            if (proj.tags && proj.tags.length > 0) {
+              tagsHtml = '<div class="project-card-tags">';
+              proj.tags.forEach(tag => {
+                tagsHtml += `<span class="project-tag">${tag}</span>`;
+              });
+              tagsHtml += '</div>';
+            }
+
+            // Build links HTML
+            let linksHtml = '';
+            if (proj.live_url) {
+              linksHtml += `<a href="${proj.live_url}" target="_blank" class="btn btn-primary" style="padding:8px 20px;font-size:0.8rem;">Live Demo</a> `;
+            }
+            if (proj.github_url) {
+              linksHtml += `<a href="${proj.github_url}" target="_blank" class="btn btn-outline" style="padding:8px 20px;font-size:0.8rem;">GitHub</a>`;
+            }
+
+            projectsGrid.innerHTML += `
+              <div class="project-card reveal ${delayClass} tilt-card">
+                <div class="project-card-image">
+                  <div class="project-card-placeholder" style="background:${proj.gradient_colors};display:flex;align-items:center;justify-content:center;height:220px;font-size:4rem;">${proj.icon_emoji}</div>
+                  <div class="project-card-overlay">
+                    ${linksHtml}
+                  </div>
+                </div>
+                <div class="project-card-body">
+                  ${tagsHtml}
+                  <h3>${proj.title}</h3>
+                  <p>${proj.description}</p>
+                </div>
+              </div>
+            `;
+          });
+        }
+      }
+    });
+  </script>
 </body>
 </html>

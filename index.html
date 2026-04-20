@@ -115,39 +115,8 @@
         <h2 class="section-title reveal delay-1">Technologies I <span class="gradient-text">Work With</span></h2>
         <p class="section-desc reveal delay-2">Building a strong foundation in development, one language at a time.</p>
       </div>
-      <div class="skills-grid">
-        <div class="skill-item reveal delay-1 tilt-card">
-          <span class="skill-icon">🐍</span>
-          <span class="skill-name">Python</span>
-        </div>
-        <div class="skill-item reveal delay-2 tilt-card">
-          <span class="skill-icon">☕</span>
-          <span class="skill-name">Java</span>
-        </div>
-        <div class="skill-item reveal delay-3 tilt-card">
-          <span class="skill-icon">🌐</span>
-          <span class="skill-name">HTML</span>
-        </div>
-        <div class="skill-item reveal delay-4 tilt-card">
-          <span class="skill-icon">🎨</span>
-          <span class="skill-name">CSS</span>
-        </div>
-        <div class="skill-item reveal delay-5 tilt-card">
-          <span class="skill-icon">⚡</span>
-          <span class="skill-name">JavaScript</span>
-        </div>
-        <div class="skill-item reveal delay-6 tilt-card">
-          <span class="skill-icon">🗃️</span>
-          <span class="skill-name">SQL</span>
-        </div>
-        <div class="skill-item reveal delay-7 tilt-card">
-          <span class="skill-icon">🐙</span>
-          <span class="skill-name">Git & GitHub</span>
-        </div>
-        <div class="skill-item reveal delay-8 tilt-card">
-          <span class="skill-icon">🤖</span>
-          <span class="skill-name">AI / ML</span>
-        </div>
+      <div class="skills-grid" id="dynamic-skills-grid">
+        <!-- Skills will be loaded dynamically via api.js -->
       </div>
     </div>
   </section>
@@ -160,51 +129,8 @@
         <h2 class="section-title reveal delay-1">My <span class="gradient-text">Projects</span></h2>
         <p class="section-desc reveal delay-2">Real-world applications I've built to sharpen my skills.</p>
       </div>
-      <div class="projects-grid">
-        <!-- Project 1: Attendance Calculator -->
-        <div class="project-card reveal delay-1 tilt-card">
-          <div class="project-card-image">
-            <div class="project-card-placeholder" style="background: linear-gradient(135deg, #6c63ff33, #00d4ff22); display:flex; align-items:center; justify-content:center; height:220px; font-size:4rem;">📊</div>
-            <div class="project-card-overlay">
-              <a href="https://srijan51.github.io/attendance-calculator/" target="_blank" class="btn btn-primary" style="padding:8px 20px;font-size:0.8rem;">Live Demo</a>
-            </div>
-          </div>
-          <div class="project-card-body">
-            <div class="project-card-tags"><span class="project-tag">HTML</span><span class="project-tag">CSS</span><span class="project-tag">JavaScript</span></div>
-            <h3>Attendance Calculator</h3>
-            <p>Calculate and track your attendance percentage, plan bunks, and know how many classes you need to attend to maintain your target.</p>
-          </div>
-        </div>
-
-        <!-- Project 2: To-Do Task Planner -->
-        <div class="project-card reveal delay-2 tilt-card">
-          <div class="project-card-image">
-            <div class="project-card-placeholder" style="background: linear-gradient(135deg, #a855f733, #6c63ff22); display:flex; align-items:center; justify-content:center; height:220px; font-size:4rem;">✅</div>
-            <div class="project-card-overlay">
-              <a href="https://srijan51.github.io/to-do-list/" target="_blank" class="btn btn-primary" style="padding:8px 20px;font-size:0.8rem;">Live Demo</a>
-            </div>
-          </div>
-          <div class="project-card-body">
-            <div class="project-card-tags"><span class="project-tag">HTML</span><span class="project-tag">CSS</span><span class="project-tag">JavaScript</span></div>
-            <h3>To-Do Task Planner</h3>
-            <p>A clean, intuitive task management app to organize your daily tasks with add, complete, and delete functionality.</p>
-          </div>
-        </div>
-
-        <!-- Project 3: Expense Tracker -->
-        <div class="project-card reveal delay-3 tilt-card">
-          <div class="project-card-image">
-            <div class="project-card-placeholder" style="background: linear-gradient(135deg, #00d4ff33, #a855f722); display:flex; align-items:center; justify-content:center; height:220px; font-size:4rem;">💰</div>
-            <div class="project-card-overlay">
-              <a href="https://srijan51.github.io/expense-tracker/" target="_blank" class="btn btn-primary" style="padding:8px 20px;font-size:0.8rem;">Live Demo</a>
-            </div>
-          </div>
-          <div class="project-card-body">
-            <div class="project-card-tags"><span class="project-tag">HTML</span><span class="project-tag">CSS</span><span class="project-tag">JavaScript</span></div>
-            <h3>Expense Tracker</h3>
-            <p>Track your income and expenses with a visual breakdown. Stay on top of your finances with this simple budgeting tool.</p>
-          </div>
-        </div>
+      <div class="projects-grid" id="dynamic-projects-grid">
+        <!-- Featured Projects will be loaded dynamically via api.js -->
       </div>
 
       <div style="text-align: center; margin-top: var(--space-3xl);" class="reveal">
@@ -271,7 +197,71 @@
     </div>
   </footer>
 
+  <script src="js/api.js"></script>
   <script src="js/main.js"></script>
   <script src="js/effects.js"></script>
+  <script>
+    // Initialize dynamic content on index page
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Load Skills
+      const skillsGrid = document.getElementById('dynamic-skills-grid');
+      if (skillsGrid && window.api) {
+        const skills = await window.api.fetchSkills();
+        if (skills.length > 0) {
+          skillsGrid.innerHTML = '';
+          skills.forEach((skill, index) => {
+            const delayClass = `delay-${(index % 8) + 1}`;
+            skillsGrid.innerHTML += `
+              <div class="skill-item reveal ${delayClass} tilt-card">
+                <span class="skill-icon">${skill.icon_emoji}</span>
+                <span class="skill-name">${skill.name}</span>
+              </div>
+            `;
+          });
+        }
+      }
+
+      // Load Featured Projects
+      const projectsGrid = document.getElementById('dynamic-projects-grid');
+      if (projectsGrid && window.api) {
+        const projects = await window.api.fetchProjects(true); // featured only
+        if (projects.length > 0) {
+          projectsGrid.innerHTML = '';
+          projects.forEach((proj, index) => {
+            const delayClass = `delay-${(index % 3) + 1}`;
+            
+            // Build tags HTML
+            let tagsHtml = '';
+            if (proj.tags && proj.tags.length > 0) {
+              tagsHtml = '<div class="project-card-tags">';
+              proj.tags.forEach(tag => {
+                tagsHtml += `<span class="project-tag">${tag}</span>`;
+              });
+              tagsHtml += '</div>';
+            }
+
+            // Build Demo link HTML
+            let demoBtn = proj.live_url ? `<a href="${proj.live_url}" target="_blank" class="btn btn-primary" style="padding:8px 20px;font-size:0.8rem;">Live Demo</a>` : '';
+
+            projectsGrid.innerHTML += `
+              <div class="project-card reveal ${delayClass} tilt-card">
+                <div class="project-card-image">
+                  <div class="project-card-placeholder" style="background: ${proj.gradient_colors}; display:flex; align-items:center; justify-content:center; height:220px; font-size:4rem;">${proj.icon_emoji}</div>
+                  <div class="project-card-overlay">
+                    ${demoBtn}
+                  </div>
+                </div>
+                <div class="project-card-body">
+                  ${tagsHtml}
+                  <h3>${proj.title}</h3>
+                  <p>${proj.description}</p>
+                </div>
+              </div>
+            `;
+          });
+        }
+      }
+    });
+  </script>
 </body>
 </html>

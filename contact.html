@@ -50,7 +50,8 @@
         <!-- Form -->
         <div class="reveal-left">
           <h3 style="margin-bottom:var(--space-xl);font-size:var(--fs-xl);">Send a <span class="gradient-text">Message</span></h3>
-          <form id="contact-form" action="https://formsubmit.co/dsrijan72@gmail.com" method="POST">
+          <form id="contact-form" onsubmit="event.preventDefault(); submitDynamicForm();">
+            <div id="form-feedback" style="margin-bottom: 1rem; display: none; padding: 10px; border-radius: 8px;"></div>
             <div class="form-group">
               <input type="text" id="name" name="name" placeholder=" " required>
               <label for="name">Your Name</label>
@@ -67,11 +68,7 @@
               <textarea id="message" name="message" rows="5" placeholder=" " required></textarea>
               <label for="message">Your Message</label>
             </div>
-            <input type="hidden" name="_subject" value="New message from Portfolio!">
-            <input type="hidden" name="_captcha" value="false">
-            <input type="hidden" name="_template" value="table">
-            <input type="text" name="_honey" style="display:none">
-            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
+            <button type="submit" id="submit-btn" class="btn btn-primary" style="width:100%;justify-content:center;">
               Send Message
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
             </button>
@@ -119,7 +116,44 @@
       </div>
     </div>
   </footer>
+  <script src="js/api.js"></script>
   <script src="js/main.js"></script>
   <script src="js/effects.js"></script>
+  <script>
+    async function submitDynamicForm() {
+      const btn = document.getElementById('submit-btn');
+      const feedback = document.getElementById('form-feedback');
+      
+      const data = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value
+      };
+      
+      btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;">Sending... <span class="preloader-spinner" style="width:18px;height:18px;border-width:2px;border-color:currentColor;border-top-color:transparent;"></span></span>';
+      btn.disabled = true;
+      feedback.style.display = 'none';
+
+      try {
+        await window.api.submitContactForm(data);
+        feedback.style.display = 'block';
+        feedback.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+        feedback.style.color = '#4CAF50';
+        feedback.style.border = '1px solid #4CAF50';
+        feedback.textContent = 'Message sent successfully! I will get back to you soon.';
+        document.getElementById('contact-form').reset();
+      } catch (error) {
+        feedback.style.display = 'block';
+        feedback.style.backgroundColor = 'rgba(244, 67, 54, 0.1)';
+        feedback.style.color = '#F44336';
+        feedback.style.border = '1px solid #F44336';
+        feedback.textContent = 'Failed to send message. Please try again later.';
+      } finally {
+        btn.innerHTML = 'Send Message <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
+        btn.disabled = false;
+      }
+    }
+  </script>
 </body>
 </html>

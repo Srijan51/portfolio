@@ -113,51 +113,8 @@
 
   <section>
     <div class="container">
-      <div class="blog-grid">
-        <!-- Blog Post 1 -->
-        <a href="#" class="blog-card reveal delay-1" style="text-decoration:none; color:inherit;">
-          <div class="blog-card-header">
-            <div class="blog-card-meta">
-              <span class="blog-date">Mar 2026</span>
-              <span class="blog-category">Web Dev</span>
-            </div>
-            <h3>Building My Portfolio Website From Scratch</h3>
-          </div>
-          <p>How I designed and built this portfolio using vanilla HTML, CSS, and JavaScript — with smooth animations and a dark theme.</p>
-          <div class="blog-card-footer">
-            Read More →
-          </div>
-        </a>
-
-        <!-- Blog Post 2 -->
-        <a href="#" class="blog-card reveal delay-2" style="text-decoration:none; color:inherit;">
-          <div class="blog-card-header">
-            <div class="blog-card-meta">
-              <span class="blog-date">Feb 2026</span>
-              <span class="blog-category">Python</span>
-            </div>
-            <h3>Getting Started With Python: My Learning Path</h3>
-          </div>
-          <p>A beginner's perspective on learning Python — the resources I used, mistakes I made, and what worked best for me.</p>
-          <div class="blog-card-footer">
-            Read More →
-          </div>
-        </a>
-
-        <!-- Blog Post 3 -->
-        <a href="#" class="blog-card reveal delay-3" style="text-decoration:none; color:inherit;">
-          <div class="blog-card-header">
-            <div class="blog-card-meta">
-              <span class="blog-date">Jan 2026</span>
-              <span class="blog-category">College Life</span>
-            </div>
-            <h3>My First Semester as a CSE Student</h3>
-          </div>
-          <p>Reflections on starting B.Tech — balancing academics, self-learning, and building projects alongside college.</p>
-          <div class="blog-card-footer">
-            Read More →
-          </div>
-        </a>
+      <div class="blog-grid" id="dynamic-blog-grid">
+        <!-- Blog posts will be loaded dynamically via api.js -->
       </div>
 
       <!-- Coming Soon Message -->
@@ -180,7 +137,37 @@
       </div>
     </div>
   </footer>
+  <script src="js/api.js"></script>
   <script src="js/main.js"></script>
   <script src="js/effects.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const blogGrid = document.getElementById('dynamic-blog-grid');
+      if (blogGrid && window.api) {
+        const posts = await window.api.fetchBlogPosts();
+        if (posts.length > 0) {
+          blogGrid.innerHTML = '';
+          posts.forEach((post, index) => {
+            const delayClass = `delay-${(index % 3) + 1}`;
+            blogGrid.innerHTML += `
+              <a href="#" class="blog-card reveal ${delayClass}" style="text-decoration:none; color:inherit;">
+                <div class="blog-card-header">
+                  <div class="blog-card-meta">
+                    <span class="blog-date">${post.published_date}</span>
+                    <span class="blog-category">${post.category}</span>
+                  </div>
+                  <h3>${post.title}</h3>
+                </div>
+                <p>${post.excerpt}</p>
+                <div class="blog-card-footer">
+                  Read More →
+                </div>
+              </a>
+            `;
+          });
+        }
+      }
+    });
+  </script>
 </body>
 </html>

@@ -107,58 +107,8 @@
 
   <section>
     <div class="container">
-      <div class="cert-grid">
-        <!-- Certificate 1 -->
-        <div class="cert-card reveal delay-1">
-          <div class="cert-icon">🐍</div>
-          <h3>Python Basic Certificate</h3>
-          <p class="cert-issuer">HackerRank</p>
-          <p class="cert-date">📅 2026</p>
-          <p>Validated foundational Python skills including data types, control flow, functions, and object-oriented basics.</p>
-          <a href="certificates/python_basic certificate.pdf" target="_blank" class="cert-link">
-            View Certificate
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-          </a>
-        </div>
-
-        <!-- Certificate 2 -->
-        <div class="cert-card reveal delay-2">
-          <div class="cert-icon">🤖</div>
-          <h3>Programming with Generative AI</h3>
-          <p class="cert-issuer">NPTEL</p>
-          <p class="cert-date">📅 2025</p>
-          <p>Learned how to leverage generative AI tools for programming, prompt engineering, and building AI-powered applications.</p>
-          <a href="certificates/Programming with Generative AI.pdf" target="_blank" class="cert-link">
-            View Certificate
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-          </a>
-        </div>
-
-        <!-- Certificate 3 -->
-        <div class="cert-card reveal delay-3">
-          <div class="cert-icon">💼</div>
-          <h3>Data Analytics Job Simulation</h3>
-          <p class="cert-issuer">Deloitte</p>
-          <p class="cert-date">📅 2025</p>
-          <p>Professional development certification from Deloitte covering industry-relevant skills and practices.</p>
-          <a href="certificates/Deloitte Certificate.pdf" target="_blank" class="cert-link">
-            View Certificate
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-          </a>
-        </div>
-
-        <!-- Certificate 4 -->
-        <div class="cert-card reveal delay-4">
-          <div class="cert-icon">📜</div>
-          <h3>Basics of Data Structures and Algorithms</h3>
-          <p class="cert-issuer">SimpliLearn</p>
-          <p class="cert-date">📅 2025</p>
-          <p>Recognition of skills and knowledge demonstrated through coursework and practical assessments.</p>
-          <a href="certificates/Certificate.pdf" target="_blank" class="cert-link">
-            View Certificate
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-          </a>
-        </div>
+      <div class="cert-grid" id="dynamic-cert-grid">
+        <!-- Certifications will be loaded dynamically via api.js -->
       </div>
     </div>
   </section>
@@ -174,7 +124,43 @@
       </div>
     </div>
   </footer>
+  <script src="js/api.js"></script>
   <script src="js/main.js"></script>
   <script src="js/effects.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const certGrid = document.getElementById('dynamic-cert-grid');
+      if (certGrid && window.api) {
+        const certs = await window.api.fetchCertifications();
+        if (certs.length > 0) {
+          certGrid.innerHTML = '';
+          certs.forEach((cert, index) => {
+            const delayClass = `delay-${(index % 4) + 1}`;
+            
+            let btnHtml = '';
+            if (cert.certificate_url) {
+              btnHtml = `
+                <a href="${cert.certificate_url}" target="_blank" class="cert-link">
+                  View Certificate
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                </a>
+              `;
+            }
+
+            certGrid.innerHTML += `
+              <div class="cert-card reveal ${delayClass}">
+                <div class="cert-icon">${cert.icon_emoji}</div>
+                <h3>${cert.title}</h3>
+                <p class="cert-issuer">${cert.issuer}</p>
+                <p class="cert-date">📅 ${cert.year}</p>
+                <p>${cert.description}</p>
+                ${btnHtml}
+              </div>
+            `;
+          });
+        }
+      }
+    });
+  </script>
 </body>
 </html>
