@@ -1,8 +1,5 @@
 // js/api.js
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://127.0.0.1:8000/api'
-    : 'https://srijan-portfolio-api.azurewebsites.net/api'; // Replace when deploying
-
+const API_BASE_URL = 'https://srijan-portfolio-api.azurewebsites.net/api';
 async function fetchProjects(featured = false) {
     try {
         const url = featured ? `${API_BASE_URL}/projects/featured` : `${API_BASE_URL}/projects`;

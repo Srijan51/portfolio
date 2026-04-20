@@ -1,6 +1,4 @@
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://127.0.0.1:8000/api'
-    : 'https://srijan-portfolio-api.azurewebsites.net/api';
+const API_BASE_URL = 'https://srijan-portfolio-api.azurewebsites.net/api';
 
 class AdminAPI {
     constructor() {
@@ -14,7 +12,7 @@ class AdminAPI {
         if (this.token) {
             headers['Authorization'] = `Bearer ${this.token}`;
         }
-        
+
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             ...options,
             headers: {
@@ -22,37 +20,37 @@ class AdminAPI {
                 ...options.headers
             }
         });
-        
+
         if (response.status === 401) {
             localStorage.removeItem('adminToken');
             window.location.href = 'index.html';
         }
-        
+
         if (!response.ok && response.status !== 204) {
             throw new Error(`API error: ${response.status}`);
         }
-        
+
         return response.status !== 204 ? await response.json() : null;
     }
 
     login(password) { return this.request('/admin/login', { method: 'POST', body: JSON.stringify({ password }) }); }
-    
+
     getProjects() { return this.request('/projects'); }
     createProject(data) { return this.request('/admin/projects', { method: 'POST', body: JSON.stringify(data) }); }
     deleteProject(id) { return this.request(`/admin/projects/${id}`, { method: 'DELETE' }); }
-    
+
     getBlogs() { return this.request('/admin/blog'); }
     createBlog(data) { return this.request('/admin/blog', { method: 'POST', body: JSON.stringify(data) }); }
     deleteBlog(id) { return this.request(`/admin/blog/${id}`, { method: 'DELETE' }); }
-    
+
     getCertifications() { return this.request('/certifications'); }
     createCertification(data) { return this.request('/admin/certifications', { method: 'POST', body: JSON.stringify(data) }); }
     deleteCertification(id) { return this.request(`/admin/certifications/${id}`, { method: 'DELETE' }); }
-    
+
     getSkills() { return this.request('/skills'); }
     createSkill(data) { return this.request('/admin/skills', { method: 'POST', body: JSON.stringify(data) }); }
     deleteSkill(id) { return this.request(`/admin/skills/${id}`, { method: 'DELETE' }); }
-    
+
     getMessages() { return this.request('/admin/messages'); }
     deleteMessage(id) { return this.request(`/admin/messages/${id}`, { method: 'DELETE' }); }
 }
@@ -63,7 +61,7 @@ window.adminApp = {
     init() {
         this.contentArea = document.getElementById('content-area');
         this.pageTitle = document.getElementById('page-title');
-        
+
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -72,23 +70,23 @@ window.adminApp = {
                 this.loadTab(e.target.dataset.tab);
             });
         });
-        
+
         this.loadTab('projects');
     },
-    
+
     async loadTab(tab) {
         this.currentTab = tab;
         this.contentArea.innerHTML = '<div style="text-align:center; padding:2rem;"><div class="preloader-spinner" style="width:30px;height:30px;border-width:3px;margin:0 auto;border-color:currentColor;border-top-color:transparent;"></div></div>';
         const formContainer = document.getElementById('form-container');
-        if(formContainer) formContainer.style.display = 'none';
+        if (formContainer) formContainer.style.display = 'none';
 
         const addBtn = document.getElementById('add-btn');
-        if(addBtn) {
+        if (addBtn) {
             addBtn.style.display = tab === 'messages' ? 'none' : 'flex';
         }
-        
+
         try {
-            switch(tab) {
+            switch (tab) {
                 case 'projects':
                     this.pageTitle.textContent = 'Manage Projects';
                     await this.renderProjects();
@@ -114,14 +112,14 @@ window.adminApp = {
             this.contentArea.innerHTML = `<div style="color:red">Error loading data: Ensure backend server is running on localhost:8000.</div>`;
         }
     },
-    
+
     async renderProjects() {
         const data = await window.adminApi.getProjects();
         let html = '<table class="admin-table"><tr><th>Title</th><th>Demo URL</th><th>Featured</th><th>Actions</th></tr>';
         data.forEach(item => {
             html += `<tr>
                 <td>${item.icon_emoji} ${item.title}</td>
-                <td>${item.live_url ? '<a href="'+item.live_url+'" target="_blank" style="color:var(--accent-secondary)">Link</a>' : '-'}</td>
+                <td>${item.live_url ? '<a href="' + item.live_url + '" target="_blank" style="color:var(--accent-secondary)">Link</a>' : '-'}</td>
                 <td>${item.is_featured ? 'Yes' : 'No'}</td>
                 <td>
                     <button class="action-btn delete" onclick="adminApp.deleteItem('projects', ${item.id})">Delete</button>
@@ -204,7 +202,7 @@ window.adminApp = {
     async deleteItem(type, id) {
         if (!confirm('Are you sure you want to delete this item?')) return;
         try {
-            switch(type) {
+            switch (type) {
                 case 'projects': await window.adminApi.deleteProject(id); break;
                 case 'blog': await window.adminApi.deleteBlog(id); break;
                 case 'certifications': await window.adminApi.deleteCertification(id); break;
@@ -221,11 +219,11 @@ window.adminApp = {
         const container = document.getElementById('form-container');
         container.style.display = 'block';
         let html = '<h3 style="margin-bottom: 1.5rem;">Add New Item</h3>';
-        
+
         // Input style helper
         const inputStyle = `width: 100%; border: 1px solid var(--bg-glass-border); padding: 12px; background: transparent; color: white; border-radius: 8px; margin-bottom: 1rem;`;
-        
-        switch(this.currentTab) {
+
+        switch (this.currentTab) {
             case 'projects':
                 html += `
                 <form onsubmit="event.preventDefault(); adminApp.submitForm('projects')">
@@ -282,12 +280,12 @@ window.adminApp = {
     async submitForm(type) {
         try {
             let data = {};
-            switch(type) {
+            switch (type) {
                 case 'projects':
                     data = {
                         title: document.getElementById('f_title').value,
                         description: document.getElementById('f_desc').value,
-                        tags: document.getElementById('f_tags').value.split(',').map(s=>s.trim()).filter(s=>s),
+                        tags: document.getElementById('f_tags').value.split(',').map(s => s.trim()).filter(s => s),
                         live_url: document.getElementById('f_live').value || null,
                         github_url: document.getElementById('f_github').value || null,
                         icon_emoji: document.getElementById('f_icon').value || "🚀",

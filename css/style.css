@@ -138,6 +138,7 @@ a {
 }
 a:hover {
   color: var(--accent-primary);
+  text-shadow: 0 0 8px var(--accent-glow);
 }
 
 ul, ol {
@@ -448,9 +449,10 @@ section {
 }
 
 .btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 30px var(--accent-glow);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 10px 30px var(--accent-glow);
   color: #fff;
+  filter: brightness(1.2);
 }
 
 .btn-outline {
@@ -461,9 +463,10 @@ section {
 
 .btn-outline:hover {
   background: var(--bg-glass);
-  border-color: var(--accent-primary);
-  transform: translateY(-3px);
-  color: var(--text-primary);
+  border-color: var(--accent-secondary);
+  transform: translateY(-4px) scale(1.03);
+  color: var(--accent-secondary);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
 }
 
 /* ---- Floating Background Shapes ---- */

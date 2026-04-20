@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('load', () => {
     setTimeout(() => {
       preloader.classList.add('loaded');
-    }, 500);
+    }, 0);
   });
 
   // ---- Navbar Scroll Effect ----
