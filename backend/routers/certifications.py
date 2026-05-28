@@ -22,9 +22,8 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 def get_certifications(db: Session = Depends(get_db)):
     return db.query(models.Certification).order_by(models.Certification.display_order.asc(), models.Certification.created_at.desc()).all()
 
-# --- Admin Endpoints ---
-@router.post("/admin/certifications/upload", dependencies=[Depends(get_current_admin)])
-async def upload_certificate_pdf(request: Request, file: UploadFile = File(...)):
+
+async def _save_certificate_file(file: UploadFile, request: Request) -> str:
     allowed_types = {"application/pdf", "application/octet-stream"}
     suffix = Path(file.filename or "").suffix.lower()
     if file.content_type not in allowed_types or suffix != ".pdf":
@@ -38,13 +37,42 @@ async def upload_certificate_pdf(request: Request, file: UploadFile = File(...))
         while chunk := await file.read(1024 * 1024):
             await out_file.write(chunk)
 
+    return f"{str(request.base_url).rstrip('/')}/uploads/certificates/{unique_name}"
+
+# --- Admin Endpoints ---
+@router.post("/admin/certifications/upload", dependencies=[Depends(get_current_admin)])
+async def upload_certificate_pdf(request: Request, file: UploadFile = File(...)):
+    certificate_url = await _save_certificate_file(file, request)
     return {
-        "filename": unique_name,
-        "certificate_url": f"{str(request.base_url).rstrip('/')}/uploads/certificates/{unique_name}"
+        "filename": Path(certificate_url).name,
+        "certificate_url": certificate_url
     }
 
 @router.post("/admin/certifications", response_model=schemas.CertificationResponse, dependencies=[Depends(get_current_admin)])
-def create_certification(cert: schemas.CertificationCreate, db: Session = Depends(get_db)):
+async def create_certification(request: Request, db: Session = Depends(get_db)):
+    content_type = request.headers.get("content-type", "")
+
+    if content_type.startswith("multipart/form-data"):
+        form = await request.form()
+        file = form.get("file")
+        certificate_url = str(form.get("certificate_url") or "").strip() or None
+
+        if file and getattr(file, "filename", None):
+            certificate_url = await _save_certificate_file(file, request)
+
+        cert = schemas.CertificationCreate(
+            title=str(form.get("title") or "").strip(),
+            issuer=str(form.get("issuer") or "").strip(),
+            year=str(form.get("year") or "").strip(),
+            description=str(form.get("description") or "").strip(),
+            icon_emoji=str(form.get("icon_emoji") or "📜"),
+            certificate_url=certificate_url,
+            display_order=int(form.get("display_order") or 0),
+        )
+    else:
+        payload = await request.json()
+        cert = schemas.CertificationCreate(**payload)
+
     db_cert = models.Certification(**cert.model_dump())
     db.add(db_cert)
     db.commit()

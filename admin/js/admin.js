@@ -6,9 +6,11 @@ class AdminAPI {
     }
 
     async request(endpoint, options = {}) {
-        const headers = {
-            'Content-Type': 'application/json'
-        };
+        const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+        const headers = {};
+        if (!isFormData) {
+            headers['Content-Type'] = 'application/json';
+        }
         if (this.token) {
             headers['Authorization'] = `Bearer ${this.token}`;
         }
@@ -44,7 +46,10 @@ class AdminAPI {
     deleteBlog(id) { return this.request(`/admin/blog/${id}`, { method: 'DELETE' }); }
 
     getCertifications() { return this.request('/certifications'); }
-    createCertification(data) { return this.request('/admin/certifications', { method: 'POST', body: JSON.stringify(data) }); }
+    createCertification(data) {
+        const body = data instanceof FormData ? data : JSON.stringify(data);
+        return this.request('/admin/certifications', { method: 'POST', body });
+    }
     deleteCertification(id) { return this.request(`/admin/certifications/${id}`, { method: 'DELETE' }); }
 
     getSkills() { return this.request('/skills'); }
@@ -438,23 +443,25 @@ window.adminApp = {
                     await window.adminApi.createBlog(data);
                     break;
                 case 'certifications':
-                    let certificateUrl = document.getElementById('f_url').value || null;
-                    const certificateFile = document.getElementById('f_file').files[0];
-                    if (certificateFile) {
-                        const uploadResult = await window.adminApi.uploadCertificationPdf(certificateFile);
-                        certificateUrl = uploadResult.certificate_url;
+                    const certificateForm = new FormData();
+                    certificateForm.append('title', document.getElementById('f_title').value);
+                    certificateForm.append('issuer', document.getElementById('f_issuer').value);
+                    certificateForm.append('year', document.getElementById('f_year').value);
+                    certificateForm.append('description', document.getElementById('f_desc').value);
+                    certificateForm.append('icon_emoji', document.getElementById('f_icon').value || '📜');
+                    certificateForm.append('display_order', String(parseInt(document.getElementById('f_order').value || '0', 10)));
+
+                    const certificateUrlValue = document.getElementById('f_url').value.trim();
+                    if (certificateUrlValue) {
+                        certificateForm.append('certificate_url', certificateUrlValue);
                     }
 
-                    data = {
-                        title: document.getElementById('f_title').value,
-                        issuer: document.getElementById('f_issuer').value,
-                        year: document.getElementById('f_year').value,
-                        description: document.getElementById('f_desc').value,
-                        icon_emoji: document.getElementById('f_icon').value || "📜",
-                        certificate_url: certificateUrl,
-                        display_order: parseInt(document.getElementById('f_order').value || '0', 10)
-                    };
-                    await window.adminApi.createCertification(data);
+                    const certificateFile = document.getElementById('f_file').files[0];
+                    if (certificateFile) {
+                        certificateForm.append('file', certificateFile);
+                    }
+
+                    await window.adminApi.createCertification(certificateForm);
                     break;
                 case 'skills':
                     data = {
