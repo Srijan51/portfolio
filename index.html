@@ -213,7 +213,7 @@
             const delayClass = `delay-${(index % 8) + 1}`;
             skillsGrid.innerHTML += `
               <div class="skill-item reveal ${delayClass} tilt-card">
-                <span class="skill-icon">${skill.icon_emoji}</span>
+                ${window.api.buildSkillIcon(skill)}
                 <span class="skill-name">${skill.name}</span>
               </div>
             `;
@@ -235,7 +235,7 @@
             if (proj.tags && proj.tags.length > 0) {
               tagsHtml = '<div class="project-card-tags">';
               proj.tags.forEach(tag => {
-                tagsHtml += `<span class="project-tag">${tag}</span>`;
+                tagsHtml += window.api.buildTechnologyBadge(tag);
               });
               tagsHtml += '</div>';
             }

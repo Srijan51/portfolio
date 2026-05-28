@@ -31,10 +31,10 @@ def seed_db():
 
     # 3. Certifications
     certs = [
-        models.Certification(title="Python Basic Certificate", issuer="HackerRank", year="2026", description="Validated foundational Python skills including data types, control flow, functions, and object-oriented basics.", icon_emoji="🐍", display_order=1),
-        models.Certification(title="Programming with Generative AI", issuer="NPTEL", year="2025", description="Learned how to leverage generative AI tools for programming, prompt engineering, and building AI-powered applications.", icon_emoji="🤖", display_order=2),
-        models.Certification(title="Data Analytics Job Simulation", issuer="Deloitte", year="2025", description="Professional development certification from Deloitte covering industry-relevant skills and practices.", icon_emoji="💼", display_order=3),
-        models.Certification(title="Basics of Data Structures and Algorithms", issuer="SimpliLearn", year="2025", description="Recognition of skills and knowledge demonstrated through coursework and practical assessments.", icon_emoji="📜", display_order=4)
+        models.Certification(title="Python Basic Certificate", issuer="HackerRank", year="2026", description="Validated foundational Python skills including data types, control flow, functions, and object-oriented basics.", icon_emoji="🐍", certificate_url="certificates/python_basic%20certificate.pdf", display_order=1),
+        models.Certification(title="Programming with Generative AI", issuer="NPTEL", year="2025", description="Learned how to leverage generative AI tools for programming, prompt engineering, and building AI-powered applications.", icon_emoji="🤖", certificate_url="certificates/Programming%20with%20Generative%20AI.pdf", display_order=2),
+        models.Certification(title="Data Analytics Job Simulation", issuer="Deloitte", year="2025", description="Professional development certification from Deloitte covering industry-relevant skills and practices.", icon_emoji="💼", certificate_url="certificates/Deloitte%20Certificate.pdf", display_order=3),
+        models.Certification(title="Basics of Data Structures and Algorithms", issuer="SimpliLearn", year="2025", description="Recognition of skills and knowledge demonstrated through coursework and practical assessments.", icon_emoji="📜", certificate_url="certificates/Certificate.pdf", display_order=4)
     ]
     db.add_all(certs)
 

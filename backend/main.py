@@ -1,7 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import models
 from database import engine
+import os
 
 # Make sure tables are created
 models.Base.metadata.create_all(bind=engine)
@@ -26,6 +28,9 @@ app.include_router(blog.router, prefix="/api", tags=["Blog"])
 app.include_router(certifications.router, prefix="/api", tags=["Certifications"])
 app.include_router(skills.router, prefix="/api", tags=["Skills"])
 app.include_router(contact.router, prefix="/api", tags=["Contact"])
+
+UPLOADS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
+app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
 
 @app.post("/api/admin/login", response_model=TokenResponse, tags=["Admin"])
 def login(request: LoginRequest):

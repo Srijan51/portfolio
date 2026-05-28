@@ -100,7 +100,7 @@
             if (proj.tags && proj.tags.length > 0) {
               tagsHtml = '<div class="project-card-tags">';
               proj.tags.forEach(tag => {
-                tagsHtml += `<span class="project-tag">${tag}</span>`;
+                tagsHtml += window.api.buildTechnologyBadge(tag);
               });
               tagsHtml += '</div>';
             }

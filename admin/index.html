@@ -5,23 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login | Srijan Das</title>
     <link rel="stylesheet" href="../css/style.css">
-    <style>
-        body { background-color: var(--bg-color); color: var(--text-primary); display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .login-box { max-width: 400px; width: 100%; background: var(--bg-glass); padding: 3rem 2rem; border-radius: 12px; border: 1px solid var(--bg-glass-border); text-align: center; }
-        .login-box h2 { margin-bottom: 2rem; }
-    </style>
+    <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
-    <div class="login-box">
-        <h2>Admin <span class="gradient-text">Access</span></h2>
-        <form id="login-form">
-            <div class="form-group">
-                <input type="password" id="password" placeholder=" " required>
-                <label for="password">Password</label>
+    <div class="admin-auth-shell">
+        <div class="admin-auth-panel">
+            <div class="admin-auth-badge">Private studio</div>
+            <h1>Srijan<span class="gradient-text">.Admin</span></h1>
+            <p>Manage projects, certifications, blog posts, skills, and messages from one place.</p>
+            <ul class="admin-auth-points">
+                <li>Fast content updates backed by the API</li>
+                <li>Private access with token-based login</li>
+                <li>Designed for quick publishing on GitHub Pages</li>
+            </ul>
+        </div>
+        <div class="login-box admin-card">
+            <div class="login-card-header">
+                <span class="section-subtitle">Welcome back</span>
+                <h2>Admin <span class="gradient-text">Access</span></h2>
+                <p>Enter the password to open the dashboard.</p>
             </div>
-            <div id="error-msg" style="color: #ff4d4f; margin-bottom: 1rem; display: none;">Invalid password</div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Login</button>
-        </form>
+            <form id="login-form">
+                <div class="form-group">
+                    <input type="password" id="password" placeholder=" " required>
+                    <label for="password">Password</label>
+                </div>
+                <div id="error-msg" class="admin-form-error" style="display: none;">Invalid password</div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Login</button>
+            </form>
+        </div>
     </div>
     <script src="js/admin.js"></script>
     <script>

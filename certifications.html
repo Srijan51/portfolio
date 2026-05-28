@@ -24,6 +24,7 @@
       transition: all var(--transition-base);
       position: relative;
       overflow: hidden;
+      cursor: pointer;
     }
     .cert-card::before {
       content: '';
@@ -72,6 +73,11 @@
     .cert-link:hover {
       background: var(--accent-gradient);
       color: #fff;
+    }
+    .cert-link:focus-visible,
+    .cert-card:focus-visible {
+      outline: 3px solid rgba(79,107,237,0.35);
+      outline-offset: 3px;
     }
     @media(max-width:600px) { .cert-grid { grid-template-columns: 1fr; } }
   </style>
@@ -128,6 +134,23 @@
   <script src="js/main.js"></script>
   <script src="js/effects.js"></script>
   <script>
+    const CERTIFICATE_FALLBACK_URLS = {
+      'Python Basic Certificate': '/certificates/python_basic%20certificate.pdf',
+      'Programming with Generative AI': '/certificates/Programming%20with%20Generative%20AI.pdf',
+      'Data Analytics Job Simulation': '/certificates/Deloitte%20Certificate.pdf',
+      'Basics of Data Structures and Algorithms': '/certificates/Certificate.pdf'
+    };
+
+    function resolveCertificateUrl(cert) {
+      const rawUrl = cert.certificate_url || CERTIFICATE_FALLBACK_URLS[cert.title] || '';
+      return window.api ? window.api.resolveAssetUrl(rawUrl) : rawUrl;
+    }
+
+    function openCertificate(url) {
+      if (!url) return;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
       const certGrid = document.getElementById('dynamic-cert-grid');
       if (certGrid && window.api) {
@@ -136,11 +159,12 @@
           certGrid.innerHTML = '';
           certs.forEach((cert, index) => {
             const delayClass = `delay-${(index % 4) + 1}`;
+            const certificateUrl = resolveCertificateUrl(cert);
             
             let btnHtml = '';
-            if (cert.certificate_url) {
+            if (certificateUrl) {
               btnHtml = `
-                <a href="${cert.certificate_url}" target="_blank" class="cert-link">
+                <a href="${certificateUrl}" target="_blank" rel="noopener noreferrer" class="cert-link">
                   View Certificate
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
                 </a>
@@ -148,7 +172,7 @@
             }
 
             certGrid.innerHTML += `
-              <div class="cert-card reveal ${delayClass}">
+              <div class="cert-card reveal ${delayClass}" role="button" tabindex="0" data-url="${certificateUrl}">
                 <div class="cert-icon">${cert.icon_emoji}</div>
                 <h3>${cert.title}</h3>
                 <p class="cert-issuer">${cert.issuer}</p>
@@ -157,6 +181,16 @@
                 ${btnHtml}
               </div>
             `;
+          });
+
+          certGrid.querySelectorAll('.cert-card[data-url]').forEach(card => {
+            card.addEventListener('click', () => openCertificate(card.dataset.url));
+            card.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openCertificate(card.dataset.url);
+              }
+            });
           });
         }
       }
